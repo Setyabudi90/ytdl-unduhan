@@ -36,9 +36,7 @@ export default function Home() {
         url,
       });
       setTitle(metadata.data.title);
-      setQualities(metadata.data.formats);
-      console.log(metadata.data.formats);
-      setSelectedQuality(metadata.data.formats[0].itag);
+      setQualities(metadata.data.formats); setSelectedQuality(metadata.data.formats[0].itag);
       setDuration(metadata.data.duration);
       const minutes = Math.floor(metadata.data.duration / 60);
       const seconds = metadata.data.duration % 60;
