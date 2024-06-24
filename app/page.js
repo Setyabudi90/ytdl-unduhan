@@ -229,9 +229,9 @@ export default function Home() {
         </div>
       </section>
       {preview && url ? (
-        <div className="w-[96%] md:w-[50%] block md:flex justify-center items-center mx-auto">
+        <div className="w-[85%] md:w-[50%] block md:flex justify-center items-center mx-auto">
           <div className="w-full bg-[rgba(0,0,0, .1)] backdrop-blur-md border-gray-200 rounded-lg shadow-md shadow-[rgba(255,255,255, .10)]">
-            <div className="p-5">
+            <div className="p-3">
               <iframe
                 width="100%"
                 height="315"
