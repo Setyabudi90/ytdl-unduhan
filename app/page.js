@@ -1,113 +1,307 @@
-import Image from "next/image";
-
+"use client";
+import React, { useState } from "react";
+import {
+  Download,
+  FileAudio,
+  ThreadsLogo,
+  TiktokLogo,
+} from "@phosphor-icons/react";
+import { InstagramLogo } from "@phosphor-icons/react/dist/ssr";
+import { Poppins } from "next/font/google";
+import Link from "next/link";
+import axios from "axios";
+const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"] });
 export default function Home() {
+  const [title, setTitle] = useState("");
+  const [url, setURL] = useState("");
+  const [selectedQuality, setSelectedQuality] = useState("highest");
+  const [id, setID] = useState("");
+  const [preview, setIsPreview] = useState(false);
+  const [qualities, setQualities] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [fileSize, setFileSize] = useState(null);
+  const [speedDownload, setDownloadSpeed] = useState(null);
+  const [currentFileSize, setCurrentFileSize] = useState(0);
+  const [isClick, setIsClick] = useState(false);
+  const [duration, setDuration] = useState(null);
+
+  const handlePreview = async () => {
+    if (!url || url.trim() === "") return;
+    setID(videoID(url));
+    setIsPreview(true);
+    try {
+      const metadata = await axios.post("https://backendyt.glitch.me/metadata", {
+        url,
+      });
+      setTitle(metadata.data.title);
+      setQualities(metadata.data.formats);
+      console.log(metadata.data.formats);
+      setSelectedQuality(metadata.data.formats[0].itag);
+      setDuration(metadata.data.duration);
+      const minutes = Math.floor(metadata.data.duration / 60);
+      const seconds = metadata.data.duration % 60;
+      setDuration(`${minutes}:${seconds.toString().padStart(2, "0")}`);
+    } catch (error) {
+      console.log(error);
+      alert("Maaf, ada masalah pada server");
+      setURL("");
+    }
+  };
+
+  const handleDownload = () => {
+    setIsLoading(true);
+    setIsClick(true);
+    setProgress(0);
+    const encodeURL = encodeURIComponent(url);
+    const encodeQuality = encodeURIComponent(selectedQuality);
+    axios({
+      url: `https://backendyt.glitch.me/download?url=${encodeURL}&quality=${encodeQuality}`,
+      method: "GET",
+      responseType: "blob",
+      onDownloadProgress: (progressEvent) => {
+        const total = progressEvent.total;
+        const current = progressEvent.loaded;
+        const percentCompleted = Math.round((current / total) * 100);
+        setProgress(percentCompleted);
+        setFileSize((total / (1024 * 1024)).toFixed(2));
+        setCurrentFileSize(current);
+        const speedBytesPerSeconds = progressEvent.rate;
+        const speedMBPerSeconds = (
+          speedBytesPerSeconds /
+          (1024 * 1024)
+        ).toFixed(2);
+        setDownloadSpeed(speedMBPerSeconds);
+      },
+    })
+      .then((response) => {
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], { type: "video/mp4" })
+        );
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `${title || "video"}.mp4`);
+        document.body.appendChild(link);
+        link.click();
+        setIsLoading(false);
+        setProgress(0);
+        setDownloadSpeed(0);
+        setCurrentFileSize(0);
+        setIsClick(false);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.error(error);
+      });
+  };
+
+  const handleDownloadMp3 = () => {
+    setLoading(true);
+    setIsClick(true);
+    setProgress(0);
+    const encodeURL = encodeURIComponent(url);
+    axios({
+      url: `https://backendyt.glitch.me/download/mp3?url=${encodeURL}`,
+      method: "GET",
+      responseType: "blob",
+      onDownloadProgress: (progressEvent) => {
+        const total = progressEvent.total;
+        const current = progressEvent.loaded;
+        const percentCompleted = Math.round((current / total) * 100);
+        setProgress(percentCompleted);
+        setCurrentFileSize(current);
+        setFileSize((total / (1024 * 1024)).toFixed(2));
+        const speedBytesPerSeconds = progressEvent.rate;
+        const speedMBPerSeconds = (
+          speedBytesPerSeconds /
+          (1024 * 1024)
+        ).toFixed(2);
+        setDownloadSpeed(speedMBPerSeconds);
+      },
+    })
+      .then((response) => {
+        setIsClick(true);
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], { type: "audio/mp3" })
+        );
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `${title || "audio"}.mp3`);
+        document.body.appendChild(link);
+        link.click();
+        setLoading(false);
+        setProgress(0);
+        setDownloadSpeed(0);
+        setCurrentFileSize(0);
+        setIsClick(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.error(error);
+      });
+  };
+
+  const videoID = (url) => {
+    const regex =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/]+\/.+\/|(?:[^/]+\/)?(?:shorts|e(?!\/))\/|.*[?&]v=)|youtu.be\/)([^"&?/ ]{11})/i;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
+    <>
+      <header className={poppins.className}>
+        <nav className="border-gray-200 px-2 sm:px-4 py-5 mb-2 shadow-md shadow-white bg-[#fd0054]">
+          <div className="container flex justify-between w-full max-w-none px-2">
+            <span className="items-center gap-1 flex text-xl sm:text-2xl text-white font-semibold">
+              <Download size={`${25}`} alt="Download Icon" weight="fill" />
+              <p className="self-center">SaveTube</p>
+            </span>
+            <ul className="flex justify-between gap-3">
+              <li className="ml-3">
+                <Link
+                  href="/"
+                  className="text-white"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <InstagramLogo
+                    size={`${25}`}
+                    alt="Instagram Icon"
+                    weight="fill"
+                  />
+                </Link>
+              </li>
+              <li className="ml-3">
+                <Link
+                  href="/"
+                  className="text-white"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <TiktokLogo size={`${25}`} alt="Tiktok Icon" weight="fill" />
+                </Link>
+              </li>
+              <li className="ml-3">
+                <Link
+                  href="/"
+                  className="text-white"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ThreadsLogo
+                    size={`${25}`}
+                    alt="Threads Icon"
+                    weight="fill"
+                  />
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <section
+        data-section-id={btoa("hero")}
+        className={`text-center my-2 py-2 mt-10 md:mt-20`}
+      >
+        <h1 className="font-bold text-center sm:text-[40px] text-3xl w-[20rem] sm:w-full sm:mb-2 m-auto opacity-75">
+          Unduh Video YouTube & Shorts Cepat dan Mudah
+        </h1>
+        <p className="text-lg w-[20rem] sm:w-full m-auto font-medium opacity-45">
+          Dapatkan Video Secara Gratis dan Mudah tanpa Iklan...
         </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="mb-2 mt-4 gap-3 w-[80%] md:w-full block md:flex justify-center items-center mx-auto">
+          <input
+            type="search"
+            className="sm:w-[495px] lg:w-[630px] outline-none py-[14px] px-5 text-[14px] rounded-xl block border-2 w-full bg-black border-[#ffc4c4] text-xl"
+            placeholder="Tempel Tautan YouTube Disini"
+            onChange={(e) => setURL(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handlePreview()}
+            required
+          />
+          <button
+            className="mt-4 md:mt-0 text-white w-[100%] h-[50px] sm:w-[152px] sm:h-[52px] font-[600] bg-[#fd0054] hover:bg-[#dc2260] focus:outline-none  rounded-lg  text-center text-[17px] shadow-2xl"
+            onClick={() => handlePreview()}
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            Preview
+          </button>
         </div>
-      </div>
+      </section>
+      {preview && url ? (
+        <div className="w-[80%] md:w-[50%] block md:flex justify-center items-center mx-auto">
+          <div className="w-full bg-[rgba(0,0,0, .1)] backdrop-blur-md border-gray-200 rounded-lg shadow-md shadow-[rgba(255,255,255, .10)]">
+            <div className="p-5">
+              <iframe
+                width="100%"
+                height="315"
+                className="aspect-video rounded-md"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                src={`https://www.youtube.com/embed/${id}`}
+              ></iframe>
+            </div>
+            <p className="text-white py-4 px-3 text-2xl font-semibold text-left flex flex-col">
+              {title}
+              <strong className="mt-2 ml-1 text-base">{duration} MENIT</strong>
+            </p>
+            <div className="mb-3 mx-auto w-[95%] bg-slate-300 px-2 py-1 rounded-sm"></div>
+            <div className="grid gap-2 px-3 grid-cols-2">
+              <button
+                className="flex items-center justify-center gap-2 font-bold bg-indigo-400 px-[20px] py-[10px] md:px-7 md:py-3 rounded-lg disabled:bg-transparent disabled:text-slate-400"
+                disabled={isClick || isLoading || loading}
+                onClick={handleDownload}
+              >
+                <Download size={25} alt="Download Icon" weight="fill" />
+                .Mp4
+              </button>
+              <button
+                className="flex items-center justify-center gap-2 font-bold bg-indigo-400 px-4 py-1 rounded-lg disabled:bg-transparent disabled:text-slate-400"
+                disabled={isClick || isLoading || loading}
+                onClick={handleDownloadMp3}
+              >
+                <FileAudio size={25} alt="Download Icon" weight="fill" />
+                .Mp3
+              </button>
+            </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+            {qualities.length > 0 ? (
+              <select
+                name="options"
+                aria-label="Select an option"
+                value={selectedQuality}
+                onChange={(e) => setSelectedQuality(e.target.value)}
+                className="block w-[96%] mx-auto border border-gray-300 rounded focus:outline-none focus:border-blue-500 py-4 px-5 mt-3 text-base md:text-xl cursor-pointer bg-slate-950 text-slate-200"
+              >
+                {qualities.map((quality, index) => (
+                  <option key={index} value={quality.itag} data-format="mp4">
+                    {quality.quality}
+                  </option>
+                ))}
+              </select>
+            ) : null}
+            {isLoading || loading ? (
+              <div className="w-[95%] max-w-xl mt-2 bottom-0 z-30 text-sm md:text-base mx-auto">
+                <div className="bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                {fileSize && (
+                  <div className="text-center mt-2 text-sm flex justify-between items-center">
+                    <p>
+                      Ukuran: {fileSize} MB | Diunduh:
+                      {(currentFileSize / (1024 * 1024)).toFixed(2)} MB
+                    </p>
+                    || <p>Kecepatan Unduh: {speedDownload} MB/s</p>
+                  </div>
+                )}
+              </div>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }
