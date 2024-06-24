@@ -206,7 +206,7 @@ export default function Home() {
         className={`text-center my-2 py-2 mt-10 md:mt-20`}
       >
         <h1 className="font-bold text-center sm:text-[40px] text-3xl w-[20rem] sm:w-full sm:mb-2 m-auto opacity-75">
-          Unduh Video YouTube & Shorts Cepat dan Mudah
+          Unduh Video YouTube & Shorts dengan Cepat dan Mudah
         </h1>
         <p className="text-lg w-[20rem] sm:w-full m-auto font-medium opacity-45">
           Dapatkan Video Secara Gratis dan Berkualitas tanpa Iklan...
@@ -231,7 +231,7 @@ export default function Home() {
       {preview && url ? (
         <div className="w-[85%] md:w-[50%] block md:flex justify-center items-center mx-auto">
           <div className="w-full bg-[rgba(0,0,0, .1)] backdrop-blur-md border-gray-200 rounded-lg shadow-md shadow-[rgba(255,255,255, .10)]">
-            <div className="p-3">
+            <div className="p-3 md:p-5">
               <iframe
                 width="100%"
                 height="315"
