@@ -209,7 +209,7 @@ export default function Home() {
           Unduh Video YouTube & Shorts Cepat dan Mudah
         </h1>
         <p className="text-lg w-[20rem] sm:w-full m-auto font-medium opacity-45">
-          Dapatkan Video Secara Gratis dan Mudah tanpa Iklan...
+          Dapatkan Video Secara Gratis dan Berkualitas tanpa Iklan...
         </p>
         <div className="mb-2 mt-4 gap-3 w-[80%] md:w-full block md:flex justify-center items-center mx-auto">
           <input
