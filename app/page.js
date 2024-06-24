@@ -161,7 +161,7 @@ export default function Home() {
             <ul className="flex justify-between gap-3">
               <li className="ml-3">
                 <Link
-                  href="/"
+                  href="https://www.instagram.com/i.setya_b?igsh=MXZoNHFpYW4xZ2EzMg=="
                   className="text-white"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -175,7 +175,7 @@ export default function Home() {
               </li>
               <li className="ml-3">
                 <Link
-                  href="/"
+                  href="https://www.tiktok.com/@budisetya09?_t=8nSXHcFR8v2&_r=1"
                   className="text-white"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -185,7 +185,7 @@ export default function Home() {
               </li>
               <li className="ml-3">
                 <Link
-                  href="/"
+                  href="https://www.threads.net/@i.setya_b"
                   className="text-white"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -229,7 +229,7 @@ export default function Home() {
         </div>
       </section>
       {preview && url ? (
-        <div className="w-[80%] md:w-[50%] block md:flex justify-center items-center mx-auto">
+        <div className="w-[96%] md:w-[50%] block md:flex justify-center items-center mx-auto">
           <div className="w-full bg-[rgba(0,0,0, .1)] backdrop-blur-md border-gray-200 rounded-lg shadow-md shadow-[rgba(255,255,255, .10)]">
             <div className="p-5">
               <iframe
