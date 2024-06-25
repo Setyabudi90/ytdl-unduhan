@@ -246,7 +246,7 @@ export default function Home() {
             <div className="mb-3 mx-auto w-[95%] bg-slate-300 px-2 py-1 rounded-sm"></div>
             <div className="grid gap-2 px-3 grid-cols-2">
               <button
-                className="flex items-center justify-center gap-2 font-bold bg-indigo-400 px-[20px] py-[10px] md:px-7 md:py-3 rounded-lg disabled:bg-transparent disabled:text-slate-400"
+                className="flex items-center justify-center disabled:cursor-not-allowed gap-2 font-bold bg-indigo-400 px-[20px] py-[10px] md:px-7 md:py-3 rounded-lg disabled:bg-transparent disabled:text-slate-400"
                 disabled={isClick || isLoading || loading}
                 onClick={handleDownload}
               >
@@ -254,7 +254,7 @@ export default function Home() {
                 .Mp4
               </button>
               <button
-                className="flex items-center justify-center gap-2 font-bold bg-indigo-400 px-4 py-1 rounded-lg disabled:bg-transparent disabled:text-slate-400"
+                className="flex items-center justify-center disabled:cursor-not-allowed gap-2 font-bold bg-indigo-400 px-4 py-1 rounded-lg disabled:bg-transparent disabled:text-slate-400"
                 disabled={isClick || isLoading || loading}
                 onClick={handleDownloadMp3}
               >
