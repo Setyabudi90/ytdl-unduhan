@@ -147,6 +147,31 @@ export default function Home() {
     return match ? match[1] : null;
   };
 
+   function cleanQualities(qualities){
+    const qualityRelevanceMap = {
+      '144p': 160,
+      '240p': 133,
+      '360p': 18, 
+      '480p': 135, 
+      '480p60': 244,
+      '720p': 22, 
+      '720p60': 298, 
+      '1080p60': 299, 
+      '1440p': 271,
+      '1440p60': 272,
+      '2160p': 313, 
+      '2160p60': 315
+    };
+  
+    const relevantQualities = qualities.filter(item => 
+      item.quality && qualityRelevanceMap[item.quality] === item.itag
+    );
+  
+    return relevantQualities.sort((a, b) => qualityRelevanceMap[a.quality] + qualityRelevanceMap[b.quality]);
+  };
+  
+  const uniqueQualities = cleanQualities(qualities);
+
   return (
     <>
       <header className={poppins.className}>
@@ -240,8 +265,16 @@ export default function Home() {
               ></iframe>
             </div>
             <p className="text-white py-4 px-3 text-2xl font-semibold text-left flex flex-col">
-              {title}
-              <strong className="mt-2 ml-1 text-base">{duration} MENIT</strong>
+               {title ? (
+                title
+              ) : (
+                <div className="flex justify-center items-center mx-auto">
+                  <span className="loader"></span>
+                </div>
+              )}
+              <strong className="mt-2 ml-1 text-base">{`${
+                duration ? `${duration} MENIT` : ""
+              }`}</strong>
             </p>
             <div className="mb-3 mx-auto w-[95%] bg-slate-300 px-2 py-1 rounded-sm"></div>
             <div className="grid gap-2 px-3 grid-cols-2">
@@ -271,9 +304,9 @@ export default function Home() {
                 onChange={(e) => setSelectedQuality(e.target.value)}
                 className="block w-[96%] mx-auto border border-gray-300 rounded focus:outline-none focus:border-blue-500 py-4 px-5 mt-3 text-base md:text-xl cursor-pointer bg-slate-950 text-slate-200"
               >
-                {qualities.map((quality, index) => (
+               {uniqueQualities.map((quality, index) => (
                   <option key={index} value={quality.itag} data-format="mp4">
-                    {quality.quality}
+                    {`${quality.quality} (MP4)`}
                   </option>
                 ))}
               </select>
@@ -289,10 +322,10 @@ export default function Home() {
                 {fileSize && (
                   <div className="text-center mt-2 text-sm flex justify-between items-center">
                     <p>
-                      Ukuran: {fileSize} MB | Diunduh:
+                      Ukuran: {fileSize} MB | Diunduh:{" "}
                       {(currentFileSize / (1024 * 1024)).toFixed(2)} MB
                     </p>
-                    || <p>Kecepatan Unduh: {speedDownload} MB/s</p>
+                    || <p>Kecepatan Unduh: {speedDownload < 1 ? (speedDownload * 1024).toFixed(2) + " KB/s" : speedDownload + " MB/s"}</p>
                   </div>
                 )}
               </div>
