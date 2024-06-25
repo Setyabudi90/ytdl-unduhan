@@ -16,7 +16,7 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
-   height: 1090px;
+   height: 1097px;
 }
 
 .loader {
