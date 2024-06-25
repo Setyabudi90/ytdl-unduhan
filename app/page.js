@@ -85,6 +85,7 @@ export default function Home() {
         setIsLoading(false);
         setProgress(0);
         setDownloadSpeed(0);
+        setFileSize(0);
         setCurrentFileSize(0);
         setIsClick(false);
       })
@@ -131,6 +132,7 @@ export default function Home() {
         setLoading(false);
         setProgress(0);
         setDownloadSpeed(0);
+        setFileSize(0);
         setCurrentFileSize(0);
         setIsClick(false);
       })
