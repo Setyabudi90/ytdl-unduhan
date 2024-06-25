@@ -55,7 +55,7 @@ export default function Home() {
     const encodeURL = encodeURIComponent(url);
     const encodeQuality = encodeURIComponent(selectedQuality);
     axios({
-      url: `https://backendyt.glitch.me/download?url=${encodeURL}&quality=${encodeQuality}`,
+      url: `https://backendyt.glitch.me/download?url=${encodeURL}&quality=${String(encodeQuality)}`,
       method: "GET",
       responseType: "blob",
       onDownloadProgress: (progressEvent) => {
