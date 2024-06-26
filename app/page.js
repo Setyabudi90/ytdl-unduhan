@@ -308,7 +308,8 @@ export default function Home() {
               >
                {uniqueQualities.map((quality, index) => (
                   <option key={index} value={quality.itag} data-format="mp4">
-                    {`${quality.quality} (MP4)`}
+                    {`${quality.quality} (MP4)`}{" "}
+                    {quality.hasAudio ? ` - Memiliki Suara` : "- Tanpa Suara"}
                   </option>
                 ))}
               </select>
