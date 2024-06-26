@@ -12,8 +12,8 @@ export const metadata = {
     "downloader",
     "app",
     "video",
-    "savetube-psi",
-    "savetube",
+    "savetubes",
+    "simple downloader app",
   ],
   author: "ISB",
   robots: {
@@ -32,7 +32,7 @@ export const metadata = {
     description:
       "SaveTube is a simple YouTube downloader apps, yet powerful enough to meet all your video downloading needs. It allows you to effortlessly download both regular YouTube videos and YouTube Shorts with just a few clicks. Designed with a user-friendly interface, SaveTube ensures a smooth and hassle-free experience. Whether you want to watch your favorite videos offline or save them for later, SaveTube makes it quick and easy. Enjoy high-quality downloads and access your content anytime, anywhere. Perfect for those seeking a reliable and efficient tool for downloading YouTube content.",
     type: "website",
-    url: "https://savetube-psi.vercel.app/", 
+    url: "https://savetubes.vercel.app/", 
   },
 };
 
