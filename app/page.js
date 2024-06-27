@@ -149,7 +149,7 @@ export default function Home() {
     return match ? match[1] : null;
   };
 
-   function cleanQualities(qualities){
+  /* function cleanQualities(qualities){
     const qualityRelevanceMap = {
       '144p': 160,
       '240p': 133,
@@ -173,6 +173,7 @@ export default function Home() {
   };
   
   const uniqueQualities = cleanQualities(qualities);
+  */
 
   return (
     <>
@@ -306,7 +307,7 @@ export default function Home() {
                 onChange={(e) => setSelectedQuality(e.target.value)}
                 className="block w-[96%] mx-auto border border-gray-300 rounded focus:outline-none focus:border-blue-500 py-4 px-5 mt-3 text-base md:text-xl cursor-pointer bg-slate-950 text-slate-200"
               >
-               {uniqueQualities.map((quality, index) => (
+               {qualities.map((quality, index) => (
                   <option key={index} value={quality.itag} data-format="mp4">
                     {`${quality.quality} (MP4)`}{" "}
                     {quality.hasAudio ? ` - Memiliki Suara` : "- Tanpa Suara"}
