@@ -144,7 +144,8 @@ export default function Home() {
 
   const videoID = (url) => {
     const regex =
-      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/]+\/.+\/|(?:[^/]+\/)?(?:shorts|e(?!\/))\/|.*[?&]v=)|youtu.be\/)([^"&?/ ]{11})/i;
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/]+\/.+\/|(?:[^/]+\/)?(?:shorts|e(?!\/)|live)\/|.*[?&]v=|playlist\?list=)|youtu.be\/)([^"&?/ ]{11})/i
+;
     const match = url.match(regex);
     return match ? match[1] : null;
   };
